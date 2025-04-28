@@ -1,0 +1,37 @@
+import googlemaps
+import time
+
+class GoogleMapsAPI:
+    """
+    Encapsula chamadas para a API do Google Maps para obter informações de direção.
+    """
+    def __init__(self, api_key):
+        """
+        Inicializa a classe com a chave da API do Google Maps.
+
+        Args:
+            api_key (str): Chave da API do Google Maps.
+        """
+        self.gmaps = googlemaps.Client(key=api_key)
+
+    def get_directions_duration_distance(self, origem, destino):
+        """
+        Obtém a duração e a distância entre dois pontos usando a API do Google Maps.
+
+        Args:
+            origem (str): Coordenadas de latitude e longitude do ponto de origem (ex: "lat,lng").
+            destino (str): Coordenadas de latitude e longitude do ponto de destino (ex: "lat,lng").
+
+        Returns:
+            tuple: Uma tupla contendo a duração em minutos e a distância em quilômetros.
+        """
+        try:
+            response = self.gmaps.directions(origem, destino, mode='driving')
+            if response and len(response) > 0:
+                leg = response[0]['legs'][0]
+                duracao_min = leg['duration']['value'] / 60  # segundos para minutos
+                distancia_km = leg['distance']['value'] / 1000  # metros para km
+                return duracao_min, distancia_km
+        except Exception as e:
+            print(f"Erro ao chamar Directions API: {e}")
+        return None, None
